@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Safety Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Welcome, {{ name }}!</h1>
+    <h2>Women Safety Dashboard</h2>
+
+    <div class="sos-section">
+        <h3>Emergency Help</h3>
+
+        <button id="sosButton" class="sos-button"
+                onclick="sendSOS()">
+            SOS
+        </button>
+
+        <p id="status">Press SOS in an emergency.</p>
+        <p id="message"></p>
+        <div id="smsLinks"></div>
+    </div>
+
+    <hr>
+
+    <h3>Add Trusted Emergency Contact</h3>
+
+    <form action="/add_contact" method="POST">
+        <input type="text" name="contact_name"
+               placeholder="Contact Name" required>
+
+        <input type="tel" name="phone"
+               placeholder="Phone Number" required>
+
+        <button type="submit">Add Contact</button>
+    </form>
+
+    <h3>Your Emergency Contacts</h3>
+
+    {% for contact in contacts %}
+        <p>
+            {{ contact.contact_name }} -
+            {{ contact.phone }}
+        </p>
+    {% else %}
+        <p>No contacts added yet.</p>
+    {% endfor %}
+
+    <hr>
+
+    <h3>Emergency Alert History</h3>
+
+    {% for alert in alerts %}
+        <p>
+            {{ alert.created_at }} -
+            <a href="https://www.google.com/maps?q={{ alert.latitude }},{{ alert.longitude }}"
+               target="_blank">View Location</a>
+        </p>
+    {% else %}
+        <p>No emergency alerts.</p>
+    {% endfor %}
+
+    <a href="/logout">
+        <button>Logout</button>
+    </a>
+
+</div>
+
+<script>
+    const trustedContacts = [
+        {% for contact in contacts %}
+            {
+                name: {{ contact.contact_name | tojson }},
+                phone: {{ contact.phone | tojson }}
+            },
+        {% endfor %}
+    ];
+</script>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
